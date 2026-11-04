@@ -4,16 +4,16 @@ Snapshot: 2026-11-04, from `docs/jev-decisions.md` in minara-api. Gateway DTO an
 
 ## Endpoint and authentication
 
-`POST /v1/systemone`, JSON, non-streaming. Use `Authorization: Bearer <MINARA_API_KEY>`. Both domain and API key are user-configurable. `MINARA_BASE_URL` defaults to `https://minara.cloud` and must be the gateway origin without `/v1`. `MINARA_API_KEY` is required and has no default; configure it on the server and do not expose it in frontend bundles. Honor a supplied base URL rather than replacing it with the default.
+`POST /v1/systemone`, JSON, non-streaming. Use `Authorization: Bearer <KAIROS_API_KEY>`. Both domain and API key are user-configurable. `KAIROS_BASE_URL` defaults to `https://minara.cloud` and must be the gateway origin without `/v1`. `KAIROS_API_KEY` is required and has no default; configure it on the server and do not expose it in frontend bundles. Honor a supplied base URL rather than replacing it with the default.
 
 The following is a synthetic request example, not a recorded live call. Confirm that the account can use the example model before executing:
 
 ```bash
-: "${MINARA_API_KEY:?Set MINARA_API_KEY before calling Kairos}"
-MINARA_BASE_URL="${MINARA_BASE_URL:-https://minara.cloud}"
-MINARA_BASE_URL="${MINARA_BASE_URL%/}"
-curl --fail-with-body --max-time 30 "$MINARA_BASE_URL/v1/systemone" \
-  -H "Authorization: Bearer $MINARA_API_KEY" \
+: "${KAIROS_API_KEY:?Set KAIROS_API_KEY before calling Kairos}"
+KAIROS_BASE_URL="${KAIROS_BASE_URL:-https://minara.cloud}"
+KAIROS_BASE_URL="${KAIROS_BASE_URL%/}"
+curl --fail-with-body --max-time 30 "$KAIROS_BASE_URL/v1/systemone" \
+  -H "Authorization: Bearer $KAIROS_API_KEY" \
   -H 'Content-Type: application/json' \
   --data-binary '{
     "model": "Dmind/Kairos",
@@ -85,11 +85,11 @@ Reference its asset ID in a string value inside `state`, `instructions`, or `cri
 
 ## Task profiles
 
-The project owner confirmed that the bundled news JSON is authoritative and the public News profile page is awaiting correction; see [the documented differences](news-trading.md). Use this artifact, not the website's conflicting seven-field schema or bin IDs. The website's advertised Cloud template route has not been verified; no retrieval is needed to use the bundled template.
+Use `task_profile: general` for business-defined long/short/skip questions, factual judgments, and holding-period questions. To have the model select a holding period, add a `choice` question to `questions`; put a caller-fixed period in `state` or `instructions`.
 
-Omitting `task_profile` uses the upstream default `general`; explicit `general` supports custom questions. `task_profile` and `model_version` require a direct Kairos channel, not OpenRouter.
+`news_return_v4` remains the compatibility identifier for the existing return-bin task. The caller supplies the asset, news, holding period, cost, and entry rule. Supported horizons are `15m`, `1h`, and `4h`. Questions and candidates must match the strict template returned by authenticated `GET /v1/news/templates` on the configured `KAIROS_BASE_URL`. Follow [the template workflow](news-return-v4.md). The output is a distribution across seven gross-return intervals; application strategy determines trading actions.
 
-For `news_return_v4`, use the [fixed news workflow](news-return-v4.md) and [bundled deployment template](../assets/news-return-v4.json) supplied by the project owner. The caller chooses `15m`, `1h`, or `4h`; preserve the fixed seven-bin question and its matching cost convention. It does not automatically produce trading actions or infer that holding period. `GET /v1/news/templates` is an upstream authenticated endpoint, not a public gateway route; the bundled template avoids requiring users to retrieve it. Obtain a new verified deployment template for changes to its cost or other fixed semantics. Do not substitute arbitrary general choice questions.
+This news workflow follows the project owner's latest clarification on 2026-11-04, superseding the repository snapshot's upstream-only template-route description. Endpoint availability has not been live-tested. `task_profile` and `model_version` are Kairos extensions; do not assume support through an OpenRouter channel.
 
 ## Errors
 

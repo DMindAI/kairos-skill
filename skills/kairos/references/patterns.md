@@ -22,7 +22,7 @@ Define ordered levels for each dimension and ask one score question per dimensio
 
 For general news categorization, supply the article, timestamp, asset context, and explicit category definitions. Do not imply the model fetched current prices or knows events absent from state.
 
-For the specialized `news_return_v4` workflow, follow the [fixed news workflow](news-return-v4.md) and load the bundled template. Require the caller's holding period from `15m`, `1h`, or `4h`; preserve the exact question, bins, and matching cost. Keep resulting estimates separate from execution rules; generic classification examples do not establish predictive trading performance.
+For custom long/short/skip, factual judgments, or model-selected holding periods, use `general`. Ask a separate `choice` question for a model-selected period; express a fixed period in state or instructions. For `news_return_v4`, follow the [strict template workflow](news-return-v4.md): fetch the service template, preserve its question and candidates, and supply the caller's asset, news, horizon (`15m`, `1h`, or `4h`), cost, and entry rule. Keep the seven-bin gross-return distribution separate from application trading decisions.
 
 ## Evaluation record
 

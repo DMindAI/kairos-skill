@@ -9,25 +9,15 @@ Official documentation reviewed on 2026-11-04:
 
 ## General news judgments
 
-The use-case page calls `/v1/systemone` with model `kairos` and `task_profile: general`. Its custom choices ask about price direction (`rise`, `flat`, `fall`) and separately about a likely holding window. These are ordinary configurable questions, not the registered news template. Some general examples include a `24h` option; that does not extend the fixed news profile's supported horizons.
+Use `task_profile: general` for custom long/short/skip, factual judgments, or holding-period questions. Define business-specific action choices explicitly; the application remains responsible for permissions and execution. To request a model-selected holding period, add a `choice` question in `questions`. If the period is fixed by the caller, put it in `state` or `instructions`.
 
-Kairos evaluates the supplied item. The application supplies the news feed, maps the target asset, and applies its own decision rule. A directional answer alone does not quantify return size or establish that fees are covered. A model-selected window from a general question is not the caller-specified horizon of `news_return_v4`.
+The use-case page's direction and holding-window examples are ordinary general questions. A `24h` choice in a general example does not extend the supported horizons of the compatibility news profile. Kairos evaluates the supplied news; the application supplies the feed and maps the target asset.
 
-## Fixed return distributions
+## Strict return distributions
 
-For the user's requested fixed-template integration, retain the [owner-supplied JSON](../assets/news-return-v4.json) and read [its workflow](news-return-v4.md). Do not replace it with the general demo or edit its registered question to match website examples.
+Use `news_return_v4` for the existing seven-bin gross-return task. Its compatibility identifier remains unchanged. Follow [the template workflow](news-return-v4.md): retrieve `/v1/news/templates` from the configured service, supply the asset, news, caller-selected `15m`/`1h`/`4h` horizon, cost, and entry rule, and preserve its strict question and candidates.
 
-The project owner confirmed on 2026-11-04 that the supplied JSON is authoritative and the public News profile page is awaiting correction. The differences are recorded here to prevent accidental schema mixing:
-
-| Contract item | Owner-supplied artifact | Public News profile page |
-| --- | --- | --- |
-| State | 12 fields, including cost, source, entry rule and availability | Exactly 7 fields: news, asset, market, asset class, event type, publication time and horizon |
-| Candidate IDs | `return_bin_0` through `return_bin_6` | `bin_0` through `bin_6` |
-| Bin definitions | Supplied 15 bp cost example | Selected by market, asset class and horizon |
-| Return window | Open-to-open with supplied entry rule | Described relative to source publication |
-| Template retrieval | Repository gateway documentation describes an upstream-only endpoint | Public docs advertise authenticated Cloud `GET /v1/news/templates` |
-
-These are not interchangeable schemas. Use the owner-supplied artifact unchanged: preserve its 12 state fields, return_bin_0 through return_bin_6, and matching cost/entry conventions. Do not remove fields, rename bins, or rescale intervals to match the website. The template is bundled, so no retrieval is required; neither retrieval path was live-tested during this work. Treat a future template revision as a contract update requiring verified deployment evidence, not a reason to silently rewrite this artifact.
+The owner's latest clarification governs this workflow. The bundled JSON remains a snapshot, while the fetched service template determines the request schema. Do not mix the website's seven-field state and `bin_0` keys with the snapshot's 12-field state and `return_bin_0` keys. Do not replace the strict template with a general question. Return the distribution and let the application strategy determine trading actions.
 
 ## Interpret and evaluate
 
@@ -37,4 +27,4 @@ A trading rule can compare these side probabilities, require a minimum gap, or s
 
 Map assets by market as well as symbol, preserve the source publication time, record actual receipt and processing times, and handle stale items explicitly. Feed ingestion, deduplication, prices, position sizing, costs, and execution belong to the application. Evaluate net results and a market-relative benchmark separately from the model's gross-return prediction.
 
-Distinguish the site's later API calls on historical headlines from its historical replays and forward paper results. None is a live result produced by installing or validating this skill. Use the supplied artifact's entry and return-window rules when evaluating its predictions against execution P&L; do not substitute the website's publication-relative wording.
+Distinguish the site's later API calls on historical headlines from its historical replays and forward paper results. None is a live result produced by installing or validating this skill. Use the caller's entry rules and the fetched template's return-window contract when evaluating predictions against execution P&L.
