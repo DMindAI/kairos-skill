@@ -1,0 +1,12 @@
+{
+  "name": "kairos",
+  "version": "0.1.0",
+  "description": "Agent skills for building with the Kairos System One API.",
+  "author": {
+    "name": "DMind AI",
+    "url": "https://dmind.ai"
+  },
+  "homepage": "https://dmind.ai/docs/kairos/use-cases/trading",
+  "repository": "https://github.com/DMindAI/kairos-skill",
+  "license": "MIT"
+}

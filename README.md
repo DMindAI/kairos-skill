@@ -4,19 +4,58 @@ Teach Claude Code, Codex, and other skill-aware coding agents to integrate Kairo
 
 ## Install
 
-With the skills CLI, select your coding agent when prompted:
+Choose one installation method to avoid duplicate copies. The standard commands below use the default branch and become available after the initial implementation is merged.
+
+### Claude Code
+
+Run these two commands in your terminal:
+
+```bash
+claude plugin marketplace add DMindAI/kairos-skill
+claude plugin install kairos@dmind-ai
+```
+
+Invoke `/kairos:kairos` in Claude Code, or ask it to “use the Kairos skill”.
+
+### Codex and other agents
+
+Run the skills installer and choose your agent when prompted:
 
 ```bash
 npx skills add DMindAI/kairos-skill --skill kairos
 ```
 
-The command above installs from the default branch after the skill has been merged. To try the initial implementation branch before merge:
+Installation is project-local by default; add `-g` for a global installation. This command uses the `skills` installer from npm to install Kairos from GitHub; there is no separate Kairos npm package to install.
+
+### Preview before merge
+
+Claude Code:
+
+```bash
+claude plugin marketplace add https://github.com/DMindAI/kairos-skill.git#codex/kairos-agent-skill
+claude plugin install kairos@dmind-ai
+```
+
+Other agents:
 
 ```bash
 npx skills add https://github.com/DMindAI/kairos-skill/tree/codex/kairos-agent-skill --skill kairos
 ```
 
-Alternatively, copy the entire `skills/kairos` directory into your agent's skill directory, including `references/` and `assets/`. For example, use `.claude/skills/kairos` for a project-local Claude Code installation or `~/.codex/skills/kairos` for a personal Codex installation. Choose one method to avoid duplicate copies.
+### Manual installation
+
+Copy the entire `skills/kairos` directory into your agent's skill directory, including `references/` and `assets/`. For example, use `.claude/skills/kairos` for a project-local Claude Code installation or `~/.codex/skills/kairos` for a personal Codex installation. Read [SKILL.md](skills/kairos/SKILL.md) directly to inspect the instructions before installing.
+
+## Update
+
+For the Claude Code plugin:
+
+```bash
+claude plugin marketplace update dmind-ai
+claude plugin update kairos@dmind-ai
+```
+
+Restart Claude Code or run `/reload-plugins` to load the update. For skills CLI installations, run `npx skills update`. For manual installations, replace the complete skill directory. Plugin releases must increment the version in `.claude-plugin/plugin.json` so users receive the new version.
 
 ## Configure
 

@@ -1,0 +1,15 @@
+{
+  "name": "dmind-ai",
+  "description": "Agent skills for building with the Kairos System One API.",
+  "owner": {
+    "name": "DMind AI",
+    "url": "https://dmind.ai"
+  },
+  "plugins": [
+    {
+      "name": "kairos",
+      "description": "Kairos API integration guidance, typed questions, and news trading workflows.",
+      "source": "./"
+    }
+  ]
+}
