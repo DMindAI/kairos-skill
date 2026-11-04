@@ -5,7 +5,7 @@
 ## Build a request
 
 1. Parse the bundled JSON and deep-copy its `example` object as the request body. `horizons`, `objective`, and `candidate_order` are template metadata, not request fields.
-2. Set `model` to the exact model ID returned by authenticated `GET /v1/models`, preserving capitalization and preserve `task_profile: news_return_v4`.
+2. Set `model` to `DMIND/Kairos` exactly and preserve `task_profile: news_return_v4`. No model-list query is required.
 3. Keep the template's 12 state field names. Supply the actual asset, news, market, asset class, event type, source, publication time, availability basis, holding period, cost, entry rule, and return objective. The latter fields must describe the intended evaluation accurately. Do not reuse the historical example's asset, timestamp, or availability wording for unrelated news.
 4. Require a caller-selected horizon of `15m`, `1h`, or `4h`. Use separate requests when the caller explicitly wants multiple horizons. This profile does not ask the model to choose a horizon.
 5. Preserve `questions.return_distribution` exactly: type, instructions, all seven `return_bin_0` through `return_bin_6` IDs, their order, and criteria. Do not translate, paraphrase, rename, or rescale them. Do not mix in website examples using seven state fields or `bin_0` keys.
@@ -39,4 +39,4 @@ If a deployment rejects the bundled template, report the error and check for a s
 
 ## Validation status
 
-The template was supplied by the owner and is preserved verbatim. No live forecast was performed while authoring this skill. Keep fixture checks distinct from service validation.
+The question and candidates supplied by the owner are preserved verbatim; the example model is set to the owner-specified gateway ID `DMIND/Kairos`. No live forecast was performed while authoring this skill. Keep fixture checks distinct from service validation.

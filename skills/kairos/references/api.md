@@ -6,7 +6,7 @@ Snapshot: 2026-11-04, from `docs/jev-decisions.md` in minara-api. Gateway DTO an
 
 `POST /v1/systemone`, JSON, non-streaming. Use `Authorization: Bearer <KAIROS_API_KEY>`. Both domain and API key are user-configurable. `KAIROS_BASE_URL` defaults to `https://minara.cloud` and must be the gateway origin without `/v1`. `KAIROS_API_KEY` is required and has no default; configure it on the server and do not expose it in frontend bundles. Honor a supplied base URL rather than replacing it with the default.
 
-Query `GET /v1/models` with the API key to discover accessible model IDs. Copy the returned ID exactly, including capitalization. The historical `Dmind/Kairos` example below is not proof that this spelling or `DMIND/Kairos` is configured for the current deployment. A public catalog may omit models outside its visible groups; an absent public listing does not prove the model is unavailable to a Kairos-enabled key.
+Use `model: DMIND/Kairos` for all requests, preserving this capitalization. Do not query a model list as a setup prerequisite. Access still depends on the API key group and model permissions.
 
 The following is a synthetic request example, not a recorded live call. Confirm that the account can use the example model before executing:
 
@@ -18,7 +18,7 @@ curl --fail-with-body --max-time 30 "$KAIROS_BASE_URL/v1/systemone" \
   -H "Authorization: Bearer $KAIROS_API_KEY" \
   -H 'Content-Type: application/json' \
   --data-binary '{
-    "model": "Dmind/Kairos",
+    "model": "DMIND/Kairos",
     "state": {"message": "I was charged twice. Please refund the duplicate."},
     "questions": {
       "refund_requested": {

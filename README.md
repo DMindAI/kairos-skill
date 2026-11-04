@@ -46,8 +46,8 @@ Restart Claude Code or run `/reload-plugins` to load the update. For skills CLI 
 
 - `KAIROS_API_KEY`: your Minara Cloud API key, required only for live API calls. Keep it in your server environment or secret manager.
 - `KAIROS_BASE_URL`: optional gateway origin, defaults to `https://minara.cloud`. Exclude `/v1` and the endpoint path.
-- Model: use a model ID available to your account. Use the exact ID returned by authenticated `GET /v1/models`, preserving capitalization; do not assume `DMIND/Kairos` and `Dmind/Kairos` are interchangeable. The older gateway example uses `Dmind/Kairos`; the upstream news template preserves its supplied example name `kairos`.
-- API key group: use a key assigned to a Kairos-enabled group. A key in `default` is not guaranteed to have access to `Dmind/Kairos`; also check key-level model restrictions.
+- Model: use `DMIND/Kairos` exactly. Model-list discovery is not required.
+- API key group: use a key assigned to a Kairos-enabled group. A key in `default` is not guaranteed to have access to `DMIND/Kairos`; also check key-level model restrictions.
 
 The public endpoint is `POST /v1/systemone`, non-streaming. Installing this skill does not initiate API calls or configure credentials. Planning and code generation do not require a key. For live calls, supply the key through the environment inherited by the agent or backend; do not paste it into chat or store it in this repository.
 
@@ -65,7 +65,7 @@ The compatibility profile `news_return_v4` supports `15m`, `1h`, and `4h`. Load 
 
 ## Troubleshooting
 
-- **No access to `Dmind/Kairos`:** check whether the API key belongs to a Kairos-enabled group and permits that model. Do not assume the account's `default` group provides access.
+- **No access to `DMIND/Kairos`:** check whether the API key belongs to a Kairos-enabled group and permits that model. Do not assume the account's `default` group provides access.
 
 See [error handling](skills/kairos/references/api.md) for response formats and bounded retries. Documentation is in English; original template state values that require non-English text are represented with JSON Unicode escapes without changing their decoded values.
 
