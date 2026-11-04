@@ -47,6 +47,8 @@ Restart Claude Code or run `/reload-plugins` to load the update. For skills CLI 
 - `KAIROS_API_KEY`: your Minara Cloud API key, required only for live API calls. Keep it in your server environment or secret manager.
 - `KAIROS_BASE_URL`: optional gateway origin, defaults to `https://minara.cloud`. Exclude `/v1` and the endpoint path.
 - Model: use a model ID available to your account. The gateway example uses `Dmind/Kairos`; the upstream news template preserves its supplied example name `kairos`.
+- API key group: use a key assigned to a Kairos-enabled group. A key in `default` is not guaranteed to have access to `Dmind/Kairos`; also check key-level model restrictions.
+- HTTP requests: explicitly send the browser-style `User-Agent` shown in the [API example](skills/kairos/references/api.md), including when using Python or server-side JavaScript.
 
 The public endpoint is `POST /v1/systemone`, non-streaming. Installing this skill does not initiate API calls or configure credentials. Planning and code generation do not require a key. For live calls, supply the key through the environment inherited by the agent or backend; do not paste it into chat or store it in this repository.
 
@@ -61,6 +63,13 @@ Ask your agent:
 > Use the Kairos skill to review our System One requests, error handling, and question design.
 
 The compatibility profile `news_return_v4` supports `15m`, `1h`, and `4h`. Load `skills/kairos/assets/news-return-v4.json` locally, preserve its question and candidates, and supply the actual asset, news, horizon, cost, and entry rule. It predicts a gross-return distribution, not a trade action. See the [news reference](skills/kairos/references/news-return-v4.md) for fixed fields and input requirements.
+
+## Troubleshooting
+
+- **403, `error code: 1010`:** a reported Cloudflare rejection of the default client UA was resolved by sending a browser-style `User-Agent`. Check the actual outgoing header; this is different from a model-permission error.
+- **No access to `Dmind/Kairos`:** check whether the API key belongs to a Kairos-enabled group and permits that model. Do not assume the account's `default` group provides access.
+
+See [error handling](skills/kairos/references/api.md) for response formats and bounded retries. Documentation is in English; original template state values that require non-English text are represented with JSON Unicode escapes without changing their decoded values.
 
 ## Contents
 

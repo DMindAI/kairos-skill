@@ -32,6 +32,8 @@ Use `POST /v1/systemone` with a server-side API key and a model name available t
 
 Validate returned answer IDs, types, finite numeric values, and option membership before using them. Preserve valid zero values. A missing answer or failed request is an error, not a negative judgment. Route uncertainty and failure to explicit application behavior.
 
+Set a browser-style `User-Agent` explicitly on every server-side HTTP request, including curl, Python, and JavaScript clients; use the value in [the API reference](references/api.md). A reported Cloudflare `403` with `error code: 1010` was resolved by replacing the default client UA. Distinguish that edge rejection from a model-access error. If the key cannot access `Dmind/Kairos`, tell the user to check that the API key belongs to a Kairos-enabled group and that its model permissions allow the requested ID. Do not assume the `default` group includes Kairos or silently change the model, key, or group.
+
 Use `noul` as a probability rather than a Boolean or severity score. Read `score` against its defined levels. Do not treat `confidence` as a measured accuracy guarantee or assume Jev's calibration transfers to Kairos. Choose thresholds using labeled examples and the consequences of errors, rather than copying universal cutoffs.
 
 ## Evaluate and debug

@@ -6,6 +6,14 @@ Snapshot: 2026-11-04, from `docs/jev-decisions.md` in minara-api. Gateway DTO an
 
 `POST /v1/systemone`, JSON, non-streaming. Use `Authorization: Bearer <KAIROS_API_KEY>`. Both domain and API key are user-configurable. `KAIROS_BASE_URL` defaults to `https://minara.cloud` and must be the gateway origin without `/v1`. `KAIROS_API_KEY` is required and has no default; configure it on the server and do not expose it in frontend bundles. Honor a supplied base URL rather than replacing it with the default.
 
+Set this browser-style header explicitly on all server-side requests, rather than relying on the HTTP library's default UA:
+
+```text
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+```
+
+For Python clients, include it in the request's `headers` dictionary; for server-side JavaScript clients, include it in the `headers` passed to `fetch`. Keep API keys server-side. The curl example below includes the same header.
+
 The following is a synthetic request example, not a recorded live call. Confirm that the account can use the example model before executing:
 
 ```bash
@@ -15,6 +23,7 @@ KAIROS_BASE_URL="${KAIROS_BASE_URL%/}"
 curl --fail-with-body --max-time 30 "$KAIROS_BASE_URL/v1/systemone" \
   -H "Authorization: Bearer $KAIROS_API_KEY" \
   -H 'Content-Type: application/json' \
+  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' \
   --data-binary '{
     "model": "Dmind/Kairos",
     "state": {"message": "I was charged twice. Please refund the duplicate."},
@@ -101,3 +110,12 @@ After entering relay, errors generally use `detail: {error_type, message, code?,
 - 502/503/504: bounded retry only when suitable for the application. Do not assume retries are deduplicated or free.
 
 Retain gateway and upstream request IDs for diagnostics without logging keys or image base64. Transport failures, malformed responses, and exhausted retries must remain errors rather than defaulting to a judgment.
+
+### Cloudflare rejection versus model permissions
+
+Two integration issues were reported by the project owner:
+
+- **HTTP 403 with `error code: 1010`:** Cloudflare rejected the default HTTP client UA; supplying a browser-style `User-Agent` resolved that case. Check that the outgoing request actually includes the header above. An edge rejection may be plain text or HTML rather than the API's JSON error envelope. If it persists with the header, report the edge error and request identifier; do not repeatedly retry or mislabel it as invalid credentials.
+- **`Dmind/Kairos` unavailable in the key's group:** a valid key can still lack model access. Ask the user to check whether the API key belongs to a Kairos-enabled group, whether that group exposes the requested model, and whether key-level model restrictions allow it. The `default` group is not guaranteed to include Kairos. Suggested message: "This API key cannot access the requested Kairos model. Check whether the key belongs to a Kairos-enabled group and whether its model permissions include this model."
+
+Diagnose using the response body as well as the HTTP status. Do not change group assignments or substitute credentials automatically. These are user-reported integration findings, not live requests performed while writing this reference.
