@@ -4,7 +4,7 @@ Teach Claude Code, Codex, and other skill-aware coding agents to integrate Kairo
 
 ## Install
 
-Choose one installation method to avoid duplicate copies. The standard commands below use the default branch and become available after the initial implementation is merged.
+Choose one installation method to avoid duplicate copies. The commands below install from the default branch.
 
 ### Claude Code
 
@@ -26,21 +26,6 @@ npx skills add DMindAI/kairos-skill --skill kairos
 ```
 
 Installation is project-local by default; add `-g` for a global installation. This command uses the `skills` installer from npm to install Kairos from GitHub; there is no separate Kairos npm package to install.
-
-### Preview before merge
-
-Claude Code:
-
-```bash
-claude plugin marketplace add https://github.com/DMindAI/kairos-skill.git#codex/kairos-agent-skill
-claude plugin install kairos@dmind-ai
-```
-
-Other agents:
-
-```bash
-npx skills add https://github.com/DMindAI/kairos-skill/tree/codex/kairos-agent-skill --skill kairos
-```
 
 ### Manual installation
 
