@@ -87,9 +87,9 @@ Reference its asset ID in a string value inside `state`, `instructions`, or `cri
 
 Use `task_profile: general` for business-defined long/short/skip questions, factual judgments, and holding-period questions. To have the model select a holding period, add a `choice` question to `questions`; put a caller-fixed period in `state` or `instructions`.
 
-`news_return_v4` remains the compatibility identifier for the existing return-bin task. The caller supplies the asset, news, holding period, cost, and entry rule. Supported horizons are `15m`, `1h`, and `4h`. Questions and candidates must match the strict template returned by authenticated `GET /v1/news/templates` on the configured `KAIROS_BASE_URL`. Follow [the template workflow](news-return-v4.md). The output is a distribution across seven gross-return intervals; application strategy determines trading actions.
+`news_return_v4` remains the compatibility identifier for the existing return-bin task. The caller supplies the asset, news, holding period, cost, and entry rule. Supported horizons are `15m`, `1h`, and `4h`. Load the fixed [bundled template](../assets/news-return-v4.json) and follow [the template workflow](news-return-v4.md). Keep its question and seven candidates unchanged; the output is a distribution across seven gross-return intervals and the application strategy determines trading actions.
 
-This news workflow follows the project owner's latest clarification on 2026-11-04, superseding the repository snapshot's upstream-only template-route description. Endpoint availability has not been live-tested. `task_profile` and `model_version` are Kairos extensions; do not assume support through an OpenRouter channel.
+`/v1/news/templates` is not exposed to users. Do not fetch templates from the service; this skill ships the required JSON. `task_profile` and `model_version` are Kairos extensions; do not assume support through an OpenRouter channel.
 
 ## Errors
 

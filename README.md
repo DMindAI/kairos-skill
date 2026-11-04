@@ -44,11 +44,11 @@ Restart Claude Code or run `/reload-plugins` to load the update. For skills CLI 
 
 ## Configure
 
-- `KAIROS_API_KEY`: your Minara Cloud API key, required. Keep it in your server environment or secret manager.
+- `KAIROS_API_KEY`: your Minara Cloud API key, required only for live API calls. Keep it in your server environment or secret manager.
 - `KAIROS_BASE_URL`: optional gateway origin, defaults to `https://minara.cloud`. Exclude `/v1` and the endpoint path.
 - Model: use a model ID available to your account. The gateway example uses `Dmind/Kairos`; the upstream news template preserves its supplied example name `kairos`.
 
-The public endpoint is `POST /v1/systemone`, non-streaming. Installing this skill does not initiate API calls or configure credentials.
+The public endpoint is `POST /v1/systemone`, non-streaming. Installing this skill does not initiate API calls or configure credentials. Planning and code generation do not require a key. For live calls, supply the key through the environment inherited by the agent or backend; do not paste it into chat or store it in this repository.
 
 ## Use
 
@@ -56,11 +56,11 @@ Ask your agent:
 
 > Use the Kairos skill to add structured intent routing to this application. Keep routing rules in code and handle unsupported requests explicitly.
 
-> Use the Kairos skill to integrate news_return_v4 with a caller-selected 1h horizon. Fetch the strict template from the configured service and return the full gross-return distribution.
+> Use the Kairos skill to integrate news_return_v4 with a caller-selected 1h horizon. Load the fixed template bundled with the skill and return the full gross-return distribution.
 
 > Use the Kairos skill to review our System One requests, error handling, and question design.
 
-The compatibility profile `news_return_v4` supports `15m`, `1h`, and `4h`. Fetch `/v1/news/templates`, preserve its question and candidates, and supply the actual asset, news, horizon, cost, and entry rule. It predicts a gross-return distribution, not a trade action. See the [news reference](skills/kairos/references/news-return-v4.md) for fixed fields and input requirements.
+The compatibility profile `news_return_v4` supports `15m`, `1h`, and `4h`. Load `skills/kairos/assets/news-return-v4.json` locally, preserve its question and candidates, and supply the actual asset, news, horizon, cost, and entry rule. It predicts a gross-return distribution, not a trade action. See the [news reference](skills/kairos/references/news-return-v4.md) for fixed fields and input requirements.
 
 ## Contents
 
@@ -69,11 +69,11 @@ The compatibility profile `news_return_v4` supports `15m`, `1h`, and `4h`. Fetch
 - [Workflow recipes](skills/kairos/references/patterns.md)
 - [News trading workflows](skills/kairos/references/news-trading.md)
 - [Fixed news workflow](skills/kairos/references/news-return-v4.md)
-- [Owner-supplied template snapshot](skills/kairos/assets/news-return-v4.json)
+- [Bundled fixed news template](skills/kairos/assets/news-return-v4.json)
 
 The contract snapshot is based on Minara gateway documentation and request validation as of 2026-11-04. The news template was supplied by the project owner. Live endpoint behavior, account permissions, latency, and predictive performance have not been verified by this repository's initial documentation validation.
 
-Use `general` for custom long/short/skip, factual judgments, or model-selected holding periods. The latest owner clarification requires the service-returned strict template for `news_return_v4`; the bundled JSON is an offline snapshot, not a replacement for template retrieval.
+Use `general` for custom long/short/skip, factual judgments, or model-selected holding periods. For `news_return_v4`, use the bundled fixed JSON. `/v1/news/templates` is not exposed to users and must not be called.
 
 ## License
 

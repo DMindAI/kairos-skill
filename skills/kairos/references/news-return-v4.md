@@ -1,42 +1,40 @@
-# Strict news return template workflow
+# Fixed news return template
 
-`task_profile: news_return_v4` is the unchanged compatibility identifier for the existing return-bin task. This workflow follows the project owner's latest contract clarification on 2026-11-04.
-
-## Retrieve the template
-
-Fetch the template from the configured service before building the integration. Both the origin and key are user-configurable; the origin defaults to `https://minara.cloud` and excludes `/v1`.
-
-```bash
-: "${KAIROS_API_KEY:?Set KAIROS_API_KEY before fetching the template}"
-KAIROS_BASE_URL="${KAIROS_BASE_URL:-https://minara.cloud}"
-KAIROS_BASE_URL="${KAIROS_BASE_URL%/}"
-curl --fail-with-body --max-time 30 "$KAIROS_BASE_URL/v1/news/templates" \
-  -H "Authorization: Bearer $KAIROS_API_KEY"
-```
-
-Keep the successful JSON response as a reusable local template with its source origin and retrieval date. Never store the API key alongside it. Reuse the validated template for requests to that deployment; fetching it does not need to be repeated for every news item. Refresh it when the deployment contract changes or a template mismatch is reported. Do not silently use a cached template from a different service.
-
-The [bundled owner-supplied JSON](../assets/news-return-v4.json) is an illustrative snapshot, preserved verbatim. It is useful for offline inspection and fixtures, but does not replace retrieving the configured service's strict template. A failed retrieval must surface as a setup error, not trigger invented question text or a silent switch to `general`.
+`task_profile: news_return_v4` is the unchanged compatibility identifier for the existing return-bin task. The [bundled JSON](../assets/news-return-v4.json) is the fixed template supplied by the project owner and shipped with this skill. Load it locally; `/v1/news/templates` is not exposed to users. Do not call that endpoint or ask users to obtain a template.
 
 ## Build a request
 
-1. Inspect the returned template and its input requirements. If it contains an `example` request, copy that request, not the enclosing metadata, as the starting body. Do not assume every deployment's template response has an identical wrapper.
+1. Parse the bundled JSON and deep-copy its `example` object as the request body. `horizons`, `objective`, and `candidate_order` are template metadata, not request fields.
 2. Set `model` to the model ID available to the account and preserve `task_profile: news_return_v4`.
-3. Supply the actual asset, news, holding period, cost, and entry rule in the fields required by the returned template. Fill any other required context accurately. Do not reuse the snapshot's historical news, 15 bp cost, or entry rule as universal defaults.
+3. Keep the template's 12 state field names. Supply the actual asset, news, market, asset class, event type, source, publication time, availability basis, holding period, cost, entry rule, and return objective. The latter fields must describe the intended evaluation accurately. Do not reuse the historical example's asset, timestamp, or availability wording for unrelated news.
 4. Require a caller-selected horizon of `15m`, `1h`, or `4h`. Use separate requests when the caller explicitly wants multiple horizons. This profile does not ask the model to choose a horizon.
-5. Copy the registered question and candidates exactly, including IDs, order, instructions, and interval descriptions. Do not paraphrase, translate, rename, or manually rescale them. If the returned template cannot represent the caller's inputs, report the mismatch and obtain the supported contract instead of fabricating an adaptation.
-6. Submit the resulting body to `POST /v1/systemone` on the configured service with the API key.
+5. Preserve `questions.return_distribution` exactly: type, instructions, all seven `return_bin_0` through `return_bin_6` IDs, their order, and criteria. Do not translate, paraphrase, rename, or rescale them. Do not mix in website examples using seven state fields or `bin_0` keys.
+6. Submit the body to `POST /v1/systemone` using the configured `KAIROS_BASE_URL` (default `https://minara.cloud`) and `KAIROS_API_KEY`. Only this prediction request needs credentials; loading the template is local.
 
-The snapshot's 12 state fields and `return_bin_0` through `return_bin_6` describe that artifact. Website examples with seven state fields and `bin_0` through `bin_6` must not be mixed into it. Use the fetched template to determine the actual field schema and candidate keys.
+## Fixed intervals and caller inputs
+
+The bundled question defines these gross-return intervals in basis points:
+
+| Candidate | Gross return interval (bp) |
+| --- | --- |
+| `return_bin_0` | `[-infinity, -60)` |
+| `return_bin_1` | `[-60, -30)` |
+| `return_bin_2` | `[-30, -15)` |
+| `return_bin_3` | `[-15, 15)` |
+| `return_bin_4` | `[15, 30)` |
+| `return_bin_5` | `[30, 60)` |
+| `return_bin_6` | `[60, +infinity)` |
+
+The example uses a 15 bp round-trip cost and a particular entry rule. Cost and entry rule are caller-provided state, not universal defaults. Changing them does not authorize changing the fixed candidate intervals. Do not invent a cost-scaling formula from the template's descriptive metadata. The model returns gross returns; apply the caller's actual costs separately in business calculations.
 
 ## Read the result
 
-The output is a probability distribution over seven **gross-return** intervals. Read all probabilities by the returned template's candidate IDs. Validate completeness, finite values in [0, 1], and a sum close to 1 using an appropriate numerical tolerance. Preserve valid zeros and surface invalid distributions as errors rather than silently renormalizing them.
+Read `answers.return_distribution.probabilities` by the fixed candidate IDs in `candidate_order`. Validate completeness, finite values in [0, 1], and a sum close to 1 with a numerical tolerance. Preserve valid zeros and surface invalid distributions as errors rather than silently renormalizing them.
 
-Show the interval descriptions, asset, and caller-selected horizon with the distribution. Fees are separate from gross return. Cost, entry timing, and execution eligibility must follow the caller's inputs and the template contract; do not infer them from the most likely bin.
+Show all seven intervals with the asset and caller-selected horizon. Trading actions, sizing, costs, and execution rules belong to the business strategy; the most likely interval is not a trading instruction. Exact expected return cannot be recovered from interval probabilities without assumptions about within-bin returns and unbounded tails.
 
-The application strategy decides long/short/skip, position size, and execution. A selected bin is not itself a trading instruction. Exact expected return cannot be recovered from interval probabilities without assumptions about within-bin returns and unbounded tails.
+If a deployment rejects the bundled template, report the error and check for a skill update. Do not invent a replacement, silently switch to `general`, or direct users to the unexposed template endpoint. Template changes are distributed by the skill maintainer through versioned skill updates.
 
 ## Validation status
 
-The template retrieval command is documented from the owner's supplied workflow. No authenticated template retrieval or live forecast was performed while authoring this skill. Keep fixture checks distinct from service validation.
+The template was supplied by the owner and is preserved verbatim. No live forecast was performed while authoring this skill. Keep fixture checks distinct from service validation.

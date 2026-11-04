@@ -9,7 +9,7 @@ Use Kairos to turn application context into structured judgments. Keep the appli
 
 This skill targets Kairos through the Minara gateway. Read [the API contract](references/api.md) before implementing requests. Read [workflow recipes](references/patterns.md) when choosing questions or designing routing and evaluation. Do not assume TypeSafe Jev features or SDKs are supported merely because the protocols resemble each other.
 
-For news trading, read [the workflow guide](references/news-trading.md). Use `task_profile: general` for custom long/short/skip, factual judgments, or holding-period questions. For `news_return_v4`, read [the strict template workflow](references/news-return-v4.md), fetch `/v1/news/templates` from the configured service, and preserve the returned question and candidates. The bundled JSON is an illustrative snapshot, not a substitute for the service's current template. The caller supplies the asset, news, horizon, cost, and entry rule. General question-writing guidance does not authorize rewriting registered templates.
+For news trading, read [the workflow guide](references/news-trading.md). Use `task_profile: general` for custom long/short/skip, factual judgments, or holding-period questions. For `news_return_v4`, read [the fixed template workflow](references/news-return-v4.md) and load `assets/news-return-v4.json` from this skill. Its question and candidates are fixed; fill the caller's asset, news, horizon, cost, and entry rule into the template state. `/v1/news/templates` is not exposed to users: never call it or ask users to retrieve a template. General question-writing guidance does not authorize rewriting this task's question or candidates.
 
 ## Start with the application decision
 
@@ -28,7 +28,7 @@ For open-ended requests, inspect the relevant application flow and propose a sma
 
 ## Integrate the contract
 
-Use `POST /v1/systemone` with a server-side API key and a model name available to the user's account. Let users configure `KAIROS_BASE_URL` and `KAIROS_API_KEY`; default the base URL to `https://minara.cloud` only when no override is supplied. Never provide a default API key. Normalize a trailing slash before appending the endpoint; the base URL excludes `/v1`. `Dmind/Kairos` is the documented example, not proof of account access. Do not use Chat Completions, streaming, or legacy alpha paths.
+Use `POST /v1/systemone` with a server-side API key and a model name available to the user's account. Let users configure `KAIROS_BASE_URL` and `KAIROS_API_KEY`; default the base URL to `https://minara.cloud` only when no override is supplied. The key is needed only for live API calls, not for installing the skill, planning, or generating code. Read it from the execution environment; do not ask users to paste it into chat or save it in skill files. Never provide a default API key. Normalize a trailing slash before appending the endpoint; the base URL excludes `/v1`. `Dmind/Kairos` is the documented example, not proof of account access. Do not use Chat Completions, streaming, or legacy alpha paths.
 
 Validate returned answer IDs, types, finite numeric values, and option membership before using them. Preserve valid zero values. A missing answer or failed request is an error, not a negative judgment. Route uncertainty and failure to explicit application behavior.
 
