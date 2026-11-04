@@ -5,6 +5,12 @@ description: Build, review, and debug Kairos System One API integrations for sem
 
 # Build with Kairos
 
+## Start every invocation with setup checks
+
+Follow [the setup and update workflow](references/setup.md) before proceeding: run `scripts/check_setup.py` from this installed skill to check for a newer release and the presence of the exact environment variable `KAIROS_API_KEY`. Never reveal its value. If a newer version is available, ask whether to update automatically; on yes, execute the update using the existing installation method and scope, verify it, and reload the instructions. If the key is absent, guide the user to create a Kairos-group API key at `https://minara.cloud`, export it as `KAIROS_API_KEY`, and launch the agent from that environment. Planning can continue, but live requests require the key. Run the version check once per invocation, not once per API request.
+
+## Build the integration
+
 Use Kairos to turn application context into structured judgments. Keep the application's business decisions in code: Kairos provides evidence about language or images, while code applies permissions, arithmetic, thresholds, and actions.
 
 This skill targets Kairos through the Minara gateway. Read [the API contract](references/api.md) before implementing requests. Read [workflow recipes](references/patterns.md) when choosing questions or designing routing and evaluation. Do not assume TypeSafe Jev features or SDKs are supported merely because the protocols resemble each other.

@@ -29,7 +29,7 @@ Installation is project-local by default; add `-g` for a global installation. Th
 
 ### Manual installation
 
-Copy the entire `skills/kairos` directory into your agent's skill directory, including `references/` and `assets/`. For example, use `.claude/skills/kairos` for a project-local Claude Code installation or `~/.codex/skills/kairos` for a personal Codex installation. Read [SKILL.md](skills/kairos/SKILL.md) directly to inspect the instructions before installing.
+Copy the entire `skills/kairos` directory into your agent's skill directory, including `references/`, `assets/`, `scripts/`, and `version.json`. For example, use `.claude/skills/kairos` for a project-local Claude Code installation or `~/.codex/skills/kairos` for a personal Codex installation. Read [SKILL.md](skills/kairos/SKILL.md) directly to inspect the instructions before installing.
 
 ## Update
 
@@ -40,7 +40,9 @@ claude plugin marketplace update dmind-ai
 claude plugin update kairos@dmind-ai
 ```
 
-Restart Claude Code or run `/reload-plugins` to load the update. For skills CLI installations, run `npx skills update`. For manual installations, replace the complete skill directory. Plugin releases must increment the version in `.claude-plugin/plugin.json` so users receive the new version.
+Restart Claude Code or run `/reload-plugins` to load the update. For skills CLI installations, update Kairos in its existing scope using `npx skills update kairos`. For manual installations, replace the complete skill directory. Releases must keep `.claude-plugin/plugin.json` and `skills/kairos/version.json` at the same incremented version.
+
+Starting with 0.1.4, each skill invocation asks the agent to run a version and configuration check. When a newer release is detected on `main`, the agent offers a yes/no update prompt. Choosing yes authorizes the agent to perform that update with the existing installer and scope, then verify the installed version. Choosing no keeps the current version. Check failures are reported without blocking unrelated work. This is an agent-executed workflow, not a background auto-updater; older installations need one manual update to gain it.
 
 ## Configure
 
@@ -50,6 +52,14 @@ Restart Claude Code or run `/reload-plugins` to load the update. For skills CLI 
 - API key group: use a key assigned to a Kairos-enabled group. A key in `default` is not guaranteed to have access to `DMIND/Kairos`; also check key-level model restrictions.
 
 The public endpoint is `POST /v1/systemone`, non-streaming. Installing this skill does not initiate API calls or configure credentials. Planning and code generation do not require a key. For live calls, supply the key through the environment inherited by the agent or backend; do not paste it into chat or store it in this repository.
+
+At invocation, the skill checks for the exact variable `KAIROS_API_KEY` without revealing its value. If missing, it directs you to [Minara Cloud](https://minara.cloud) to create an API key in the **Kairos group**, then export it in the terminal used to launch your agent:
+
+```bash
+export KAIROS_API_KEY="<your Kairos-group API key>"
+```
+
+Restart the agent from that terminal so it inherits the variable. An export in another shell does not update a running process. Other providers' API key variables are not substitutes. See [setup checks](skills/kairos/references/setup.md) for the full flow.
 
 ## Use
 
@@ -72,6 +82,7 @@ See [error handling](skills/kairos/references/api.md) for response formats and b
 ## Contents
 
 - [Skill instructions](skills/kairos/SKILL.md)
+- [Version checks, automatic update consent, and API key setup](skills/kairos/references/setup.md)
 - [API contract and curl example](skills/kairos/references/api.md)
 - [Workflow recipes](skills/kairos/references/patterns.md)
 - [News trading workflows](skills/kairos/references/news-trading.md)
