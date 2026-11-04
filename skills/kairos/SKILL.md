@@ -9,7 +9,7 @@ Use Kairos to turn application context into structured judgments. Keep the appli
 
 This skill targets Kairos through the Minara gateway. Read [the API contract](references/api.md) before implementing requests. Read [workflow recipes](references/patterns.md) when choosing questions or designing routing and evaluation. Do not assume TypeSafe Jev features or SDKs are supported merely because the protocols resemble each other.
 
-For `news_return_v4`, read [the fixed news workflow](references/news-return-v4.md) and load its bundled JSON template. Preserve its fixed question and seven bins; the caller selects the horizon. The general question-writing guidance below does not authorize rewriting this task's template.
+For news trading, read [the workflow distinction and official documentation](references/news-trading.md). For `news_return_v4`, also read [the fixed news workflow](references/news-return-v4.md) and load its bundled JSON template. The owner confirmed that the bundled JSON is authoritative and the public News profile page is awaiting correction. Use the bundled contract rather than mixing it with the website's news examples. Preserve the selected template's fixed question and seven bins; the caller selects the horizon. The general question-writing guidance below does not authorize rewriting this task's template.
 
 ## Start with the application decision
 

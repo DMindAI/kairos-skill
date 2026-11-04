@@ -43,10 +43,13 @@ The news template supports `15m`, `1h`, and `4h` and preserves seven fixed retur
 - [Skill instructions](skills/kairos/SKILL.md)
 - [API contract and curl example](skills/kairos/references/api.md)
 - [Workflow recipes](skills/kairos/references/patterns.md)
+- [News trading workflows and public documentation differences](skills/kairos/references/news-trading.md)
 - [Fixed news workflow](skills/kairos/references/news-return-v4.md)
 - [Owner-supplied news template](skills/kairos/assets/news-return-v4.json)
 
 The contract snapshot is based on Minara gateway documentation and request validation as of 2026-11-04. The news template was supplied by the project owner. Live endpoint behavior, account permissions, latency, and predictive performance have not been verified by this repository's initial documentation validation.
+
+The owner confirmed that the supplied JSON is authoritative and the public News profile documentation is awaiting correction. Use the bundled 12-field state and return_bin_0 through return_bin_6; the skill records the website differences to prevent accidental schema mixing.
 
 ## License
 

@@ -2,6 +2,8 @@
 
 Read this reference before implementing `news_return_v4`. The [bundled JSON](../assets/news-return-v4.json) preserves the deployment template supplied by the project owner on 2026-11-04. It is not a live API response fetched during skill creation, a prediction result, or a current news feed.
 
+The project owner confirmed on 2026-11-04 that this supplied JSON is the authoritative news contract and the public News profile page is awaiting correction. Read [the contract differences](news-trading.md) to avoid importing the website's seven-field schema or bin IDs. Preserve all 12 state fields in this template.
+
 ## Build a request
 
 1. Load the JSON and deep-copy its `example` object as the request body. The surrounding `horizons`, `objective`, and `candidate_order` are template metadata, not request fields.

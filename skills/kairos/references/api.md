@@ -85,6 +85,8 @@ Reference its asset ID in a string value inside `state`, `instructions`, or `cri
 
 ## Task profiles
 
+The project owner confirmed that the bundled news JSON is authoritative and the public News profile page is awaiting correction; see [the documented differences](news-trading.md). Use this artifact, not the website's conflicting seven-field schema or bin IDs. The website's advertised Cloud template route has not been verified; no retrieval is needed to use the bundled template.
+
 Omitting `task_profile` uses the upstream default `general`; explicit `general` supports custom questions. `task_profile` and `model_version` require a direct Kairos channel, not OpenRouter.
 
 For `news_return_v4`, use the [fixed news workflow](news-return-v4.md) and [bundled deployment template](../assets/news-return-v4.json) supplied by the project owner. The caller chooses `15m`, `1h`, or `4h`; preserve the fixed seven-bin question and its matching cost convention. It does not automatically produce trading actions or infer that holding period. `GET /v1/news/templates` is an upstream authenticated endpoint, not a public gateway route; the bundled template avoids requiring users to retrieve it. Obtain a new verified deployment template for changes to its cost or other fixed semantics. Do not substitute arbitrary general choice questions.
