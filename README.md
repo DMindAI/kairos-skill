@@ -1,6 +1,6 @@
 # Kairos agent skill
 
-Teach Claude Code, Codex, and other skill-aware coding agents to integrate Kairos through the Minara Cloud System One API. Includes typed question design, request and response contracts, image limits, error handling, and the strict `news_return_v4` template workflow.
+Teach Claude Code, Codex, and other skill-aware coding agents to integrate Kairos through the Minara Cloud System One API. Includes typed question design, request and response contracts, image limits, error handling, and the strict `news_return` template workflow.
 
 ## Install
 
@@ -67,11 +67,11 @@ Ask your agent:
 
 > Use the Kairos skill to add structured intent routing to this application. Keep routing rules in code and handle unsupported requests explicitly.
 
-> Use the Kairos skill to integrate news_return_v4 with a caller-selected 1h horizon. Load the fixed template bundled with the skill and return the full gross-return distribution.
+> Use the Kairos skill to integrate news_return with a caller-selected 1h horizon. Load the fixed template bundled with the skill and return the full gross-return distribution.
 
 > Use the Kairos skill to review our System One requests, error handling, and question design.
 
-The compatibility profile `news_return_v4` supports `15m`, `1h`, and `4h`. Load `skills/kairos/assets/news-return-v4.json` locally, preserve its question and candidates, and supply the actual asset, news, horizon, cost, and entry rule. It predicts a gross-return distribution, not a trade action. See the [news reference](skills/kairos/references/news-return-v4.md) for fixed fields and input requirements.
+The `news_return` profile supports `15m`, `1h`, and `4h`. Load `skills/kairos/assets/news-return.json` locally, preserve its question and candidates, and supply the actual asset, news, horizon, cost, and entry rule. It predicts a gross-return distribution, not a trade action. See the [news reference](skills/kairos/references/news-return.md) for fixed fields and input requirements.
 
 ## Troubleshooting
 
@@ -86,12 +86,12 @@ See [error handling](skills/kairos/references/api.md) for response formats and b
 - [API contract and curl example](skills/kairos/references/api.md)
 - [Workflow recipes](skills/kairos/references/patterns.md)
 - [News trading workflows](skills/kairos/references/news-trading.md)
-- [Fixed news workflow](skills/kairos/references/news-return-v4.md)
-- [Bundled fixed news template](skills/kairos/assets/news-return-v4.json)
+- [Fixed news workflow](skills/kairos/references/news-return.md)
+- [Bundled fixed news template](skills/kairos/assets/news-return.json)
 
 The contract snapshot is based on Minara gateway documentation and request validation as of 2026-11-04. The news template was supplied by the project owner. Live endpoint behavior, account permissions, latency, and predictive performance have not been verified by this repository's initial documentation validation.
 
-Use `general` for custom long/short/skip, factual judgments, or model-selected holding periods. For `news_return_v4`, use the bundled fixed JSON. `/v1/news/templates` is not exposed to users and must not be called.
+Use `general` for custom long/short/skip, factual judgments, or model-selected holding periods. For `news_return`, use the bundled fixed JSON. `/v1/news/templates` is not exposed to users and must not be called.
 
 ## License
 

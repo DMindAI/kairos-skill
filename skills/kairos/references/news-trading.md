@@ -15,7 +15,7 @@ The use-case page's direction and holding-window examples are ordinary general q
 
 ## Strict return distributions
 
-Use `news_return_v4` for the existing seven-bin gross-return task. Follow [the fixed template workflow](news-return-v4.md): load the bundled JSON locally, supply the asset, news, caller-selected `15m`/`1h`/`4h` horizon, cost, and entry rule, and preserve its strict question and candidates. The template endpoint is not exposed to users and must not be called.
+Use `news_return` for the existing seven-bin gross-return task. Follow [the fixed template workflow](news-return.md): load the bundled JSON locally, supply the asset, news, caller-selected `15m`/`1h`/`4h` horizon, cost, and entry rule, and preserve its strict question and candidates. The template endpoint is not exposed to users and must not be called.
 
 The owner's bundled template defines the 12 state fields and `return_bin_0` through `return_bin_6`. Do not mix in website examples with seven state fields and `bin_0` keys. Do not replace the fixed template with a general question. Return the distribution and let the application strategy determine trading actions.
 

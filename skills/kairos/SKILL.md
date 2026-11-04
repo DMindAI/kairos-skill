@@ -15,7 +15,7 @@ Use Kairos to turn application context into structured judgments. Keep the appli
 
 This skill targets Kairos through the Minara gateway. Read [the API contract](references/api.md) before implementing requests. Read [workflow recipes](references/patterns.md) when choosing questions or designing routing and evaluation. Do not assume TypeSafe Jev features or SDKs are supported merely because the protocols resemble each other.
 
-For news trading, read [the workflow guide](references/news-trading.md). Use `task_profile: general` for custom long/short/skip, factual judgments, or holding-period questions. For `news_return_v4`, read [the fixed template workflow](references/news-return-v4.md) and load `assets/news-return-v4.json` from this skill. Its question and candidates are fixed; fill the caller's asset, news, horizon, cost, and entry rule into the template state. `/v1/news/templates` is not exposed to users: never call it or ask users to retrieve a template. General question-writing guidance does not authorize rewriting this task's question or candidates.
+For news trading, read [the workflow guide](references/news-trading.md). Use `task_profile: general` for custom long/short/skip, factual judgments, or holding-period questions. For `news_return`, read [the fixed template workflow](references/news-return.md) and load `assets/news-return.json` from this skill. Its question and candidates are fixed; fill the caller's asset, news, horizon, cost, and entry rule into the template state. `/v1/news/templates` is not exposed to users: never call it or ask users to retrieve a template. General question-writing guidance does not authorize rewriting this task's question or candidates.
 
 ## Start with the application decision
 

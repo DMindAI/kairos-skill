@@ -1,11 +1,11 @@
 # Fixed news return template
 
-`task_profile: news_return_v4` is the unchanged compatibility identifier for the existing return-bin task. The [bundled JSON](../assets/news-return-v4.json) is the fixed template supplied by the project owner and shipped with this skill. Load it locally; `/v1/news/templates` is not exposed to users. Do not call that endpoint or ask users to obtain a template.
+`task_profile: news_return` identifies the seven-bin gross-return task. The [bundled JSON](../assets/news-return.json) is the fixed template supplied by the project owner and shipped with this skill. Load it locally; `/v1/news/templates` is not exposed to users. Do not call that endpoint or ask users to obtain a template.
 
 ## Build a request
 
 1. Parse the bundled JSON and deep-copy its `example` object as the request body. `horizons`, `objective`, and `candidate_order` are template metadata, not request fields.
-2. Set `model` to `DMIND/Kairos` exactly and preserve `task_profile: news_return_v4`. No model-list query is required.
+2. Set `model` to `DMIND/Kairos` exactly and preserve `task_profile: news_return`. No model-list query is required.
 3. Keep the template's 12 state field names. Supply the actual asset, news, market, asset class, event type, source, publication time, availability basis, holding period, cost, entry rule, and return objective. The latter fields must describe the intended evaluation accurately. Do not reuse the historical example's asset, timestamp, or availability wording for unrelated news.
 4. Require a caller-selected horizon of `15m`, `1h`, or `4h`. Use separate requests when the caller explicitly wants multiple horizons. This profile does not ask the model to choose a horizon.
 5. Preserve `questions.return_distribution` exactly: type, instructions, all seven `return_bin_0` through `return_bin_6` IDs, their order, and criteria. Do not translate, paraphrase, rename, or rescale them. Do not mix in website examples using seven state fields or `bin_0` keys.
