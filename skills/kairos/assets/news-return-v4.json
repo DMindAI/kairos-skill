@@ -4,7 +4,7 @@
   "objective": "Gross target-asset return in seven cost-scaled bins; horizon is supplied by caller.",
   "candidate_order": ["return_bin_0", "return_bin_1", "return_bin_2", "return_bin_3", "return_bin_4", "return_bin_5", "return_bin_6"],
   "example": {
-    "model": "kairos",
+    "model": "DMIND/Kairos",
     "state": {
       "news_text": "Odds seen as stacked against Clarity Act as Senate readies vote",
       "target_asset": "CRCL",
