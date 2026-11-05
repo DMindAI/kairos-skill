@@ -71,7 +71,7 @@ Ask your agent:
 
 > Use the Kairos skill to review our System One requests, error handling, and question design.
 
-The `news_return` profile supports `15m`, `1h`, and `4h`. Load `skills/kairos/assets/news-return.json` locally, preserve its question and candidates, and supply the actual asset, news, horizon, cost, and entry rule. It predicts a gross-return distribution, not a trade action. See the [news reference](skills/kairos/references/news-return.md) for fixed fields and input requirements.
+The `news_return` profile supports `15m`, `1h`, and `4h`. Load `skills/kairos/assets/news-return.json` locally, preserve its question and candidate IDs and derive interval descriptions using the documented field relationship, and supply the actual required state fields. It predicts a gross-return distribution, not a trade action. See the [news reference](skills/kairos/references/news-return.md) for fixed fields and input requirements.
 
 ## Troubleshooting
 

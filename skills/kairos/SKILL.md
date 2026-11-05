@@ -15,7 +15,7 @@ Use Kairos to turn application context into structured judgments. Keep the appli
 
 This skill targets Kairos through the Minara gateway. Read [the API contract](references/api.md) before implementing requests. Read [workflow recipes](references/patterns.md) when choosing questions or designing routing and evaluation. Do not assume TypeSafe Jev features or SDKs are supported merely because the protocols resemble each other.
 
-For news trading, read [the workflow guide](references/news-trading.md). Use `task_profile: general` for custom long/short/skip, factual judgments, or holding-period questions. For `news_return`, read [the fixed template workflow](references/news-return.md) and load `assets/news-return.json` from this skill. Its question and candidates are fixed; fill the caller's asset, news, horizon, cost, and entry rule into the template state. `/v1/news/templates` is not exposed to users: never call it or ask users to retrieve a template. General question-writing guidance does not authorize rewriting this task's question or candidates.
+For news trading, read [the workflow guide](references/news-trading.md). Use `task_profile: general` for custom long/short/skip, factual judgments, or holding-period questions. For `news_return`, read [the fixed template workflow](references/news-return.md) and load `assets/news-return.json` from this skill. Its question and candidate IDs are fixed; interval descriptions must match the state as documented; fill the caller's required state fields into the template state. `/v1/news/templates` is not exposed to users: never call it or ask users to retrieve a template. Only the documented cross-field rule may change the candidate interval descriptions; preserve the question instructions and candidate IDs.
 
 ## Start with the application decision
 
@@ -34,7 +34,7 @@ For open-ended requests, inspect the relevant application flow and propose a sma
 
 ## Integrate the contract
 
-Use `POST /v1/systemone` with a server-side API key and `model: DMIND/Kairos`. Let users configure `KAIROS_BASE_URL` and `KAIROS_API_KEY`; default the base URL to `https://minara.cloud` only when no override is supplied. The key is needed only for live API calls, not for installing the skill, planning, or generating code. Read it from the execution environment; do not ask users to paste it into chat or save it in skill files. Never provide a default API key. Normalize a trailing slash before appending the endpoint; the base URL excludes `/v1`. Use `DMIND/Kairos` exactly for all requests; model-list discovery is not required. Do not use Chat Completions, streaming, or legacy alpha paths.
+Use `POST /v1/systemone` with a server-side API key and `model: DMIND/Kairos`. Let users configure `KAIROS_BASE_URL` and `KAIROS_API_KEY`; default the base URL to `https://minara.cloud` only when no override is supplied. The key is needed only for live API calls, not for installing the skill, planning, or generating code. Read it from the execution environment; do not ask users to paste it into chat or save it in skill files. Never provide a default API key. Normalize a trailing slash before appending the endpoint; the base URL excludes `/v1`. Use `DMIND/Kairos` exactly for all requests; model-list discovery is not required. Do not use Chat Completions, streaming, or legacy alpha paths. When constructing a request with image assets, automatically add `TypeSafe-Danger-Zone-Images: true`; do not ask the user to configure this header.
 
 Validate returned answer IDs, types, finite numeric values, and option membership before using them. Preserve valid zero values. A missing answer or failed request is an error, not a negative judgment. Route uncertainty and failure to explicit application behavior.
 
@@ -46,12 +46,12 @@ Use `noul` as a probability rather than a Boolean or severity score. Read `score
 
 Start with representative inputs, ambiguous cases, negative cases, and cases where no candidate fits. Compare decisions against expected outcomes and reserve examples not used to tune the questions. Avoid assertions on exact floating-point probabilities.
 
-Before a live experiment, establish authorization for the data and paid requests, the configured endpoint, and a bounded request budget. Existing explicit authorization suffices. Keep keys out of source code and logs. Use synthetic fixtures when live calls are not authorized; distinguish protocol validation from measured model quality.
+Before a live experiment, establish authorization for the data and API requests, the configured endpoint, and a bounded request budget. Existing explicit authorization suffices. Keep keys out of source code and logs. Use synthetic fixtures when live calls are not authorized; distinguish protocol validation from measured model quality.
 
 For an unexpected answer, inspect the actual payload, missing evidence, candidate coverage, and question scope before tweaking wording. For request failures, follow the error contract in the reference; bound retries and do not retry invalid input unchanged.
 
-Report which checks used fixtures and which used the actual service. Do not claim latency, accuracy, calibration, or cost improvements without measurements.
+Report which checks used fixtures and which used the actual service. Do not claim latency, accuracy, or calibration improvements without measurements.
 
 ## Contract maintenance
 
-The bundled reference is a snapshot of the repository's `docs/jev-decisions.md`, cross-checked against gateway request types and validation. When working in the source repository, consult that document and `docs/openapi/relay.json` for updates. For an installed standalone copy, consult the configured service's `/docs/system-one` documentation or obtain its current contract. Deployment-specific model capabilities and prices need confirmation; do not invent a public hostname, SDK, version, or news template.
+The bundled reference combines gateway validation with the owner-provided API contract dated 2026-11-05. Updated upstream limits require confirmation of the Cloud rollout. When working in the source repository, consult that document and `docs/openapi/relay.json` for updates. For an installed standalone copy, consult the configured service's `/docs/system-one` documentation or obtain its current contract. Deployment-specific model capabilities need confirmation; do not invent a public hostname, SDK, version, or news template.
