@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Report installed version, available updates, and API key presence without secrets."""
 
+import argparse
 import json
 import os
 from pathlib import Path
 import re
 import subprocess
 import tempfile
+import time
 import urllib.request
 
 
@@ -81,13 +83,42 @@ def check_version():
     return result
 
 
-def main():
+def scheduled_version_check(force=False, cache_path=None):
+    cache_path = cache_path or Path(
+        os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache"
+    ) / "kairos-skill" / "update-check.json"
+    now = time.time()
+    if not force:
+        try:
+            checked_at = json.loads(cache_path.read_text())["checked_at"]
+            if isinstance(checked_at, (int, float)) and 0 <= now - checked_at < 86400:
+                return {"status": "skipped", "reason": "Already checked within 24 hours"}
+        except (OSError, ValueError, KeyError, TypeError):
+            pass
+    # Record attempts, including failures, to avoid repeated network delays.
+    try:
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile(mode="w", dir=cache_path.parent, delete=False) as cache:
+            temporary = Path(cache.name)
+            json.dump({"checked_at": now}, cache)
+        temporary.replace(cache_path)
+    except OSError:
+        # Without persistent state, automatic checks cannot be throttled reliably.
+        if not force:
+            return {"status": "skipped", "reason": "Update cache unavailable; use --force-update-check explicitly"}
+    return check_version()
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--force-update-check", action="store_true")
+    args = parser.parse_args(argv)
     print(json.dumps({
         "api_key": {
             "variable": "KAIROS_API_KEY",
             "configured": bool(os.environ.get("KAIROS_API_KEY", "").strip()),
         },
-        "version": check_version(),
+        "version": scheduled_version_check(force=args.force_update_check),
     }))
 
 
