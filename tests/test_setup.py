@@ -5,6 +5,7 @@ import importlib.util
 import io
 import json
 from pathlib import Path
+import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -41,8 +42,8 @@ class SetupChecks(unittest.TestCase):
         for env, configured in [({}, False), ({"KAIROS_API_KEY": "  "}, False), ({"OPENAI_API_KEY": "sentinel-secret"}, False), ({"KAIROS_API_KEY": "sentinel-secret"}, True)]:
             with self.subTest(configured=configured):
                 output = io.StringIO()
-                with patch.dict(setup.os.environ, env, clear=True), patch.object(setup, "check_version", return_value={"status": "unknown"}), contextlib.redirect_stdout(output):
-                    setup.main()
+                with patch.dict(setup.os.environ, env, clear=True), patch.object(setup, "scheduled_version_check", return_value={"status": "unknown"}), contextlib.redirect_stdout(output):
+                    setup.main([])
                 self.assertEqual(json.loads(output.getvalue())["api_key"]["configured"], configured)
                 self.assertNotIn("sentinel-secret", output.getvalue())
 
@@ -65,6 +66,27 @@ class SetupChecks(unittest.TestCase):
         for call in git.call_args_list:
             self.assertNotIn("KAIROS_API_KEY", call.kwargs["env"])
             self.assertEqual(call.kwargs["env"]["GIT_TERMINAL_PROMPT"], "0")
+
+    def test_update_attempts_are_throttled_including_failures(self):
+        for status in ["unknown", "current", "update_available"]:
+            with self.subTest(status=status), tempfile.TemporaryDirectory() as directory:
+                cache = Path(directory) / "check.json"
+                with patch.object(setup, "check_version", return_value={"status": status}) as check:
+                    with patch.object(setup.time, "time", return_value=100000):
+                        self.assertEqual(setup.scheduled_version_check(cache_path=cache)["status"], status)
+                        self.assertEqual(setup.scheduled_version_check(cache_path=cache)["status"], "skipped")
+                    check.assert_called_once()
+                    with patch.object(setup.time, "time", return_value=186400):
+                        setup.scheduled_version_check(cache_path=cache)
+                    self.assertEqual(check.call_count, 2)
+
+    def test_force_check_bypasses_throttle(self):
+        with tempfile.TemporaryDirectory() as directory:
+            cache = Path(directory) / "check.json"
+            with patch.object(setup, "check_version", return_value={"status": "current"}) as check:
+                setup.scheduled_version_check(cache_path=cache)
+                setup.scheduled_version_check(force=True, cache_path=cache)
+            self.assertEqual(check.call_count, 2)
 
     def test_release_versions_match(self):
         plugin = json.loads((ROOT / ".claude-plugin/plugin.json").read_text())

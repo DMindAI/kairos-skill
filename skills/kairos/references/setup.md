@@ -1,6 +1,6 @@
 # Invocation checks and updates
 
-## Check once at the start of each invocation
+## Local setup check and throttled update check
 
 Run the bundled helper from the installed skill directory, resolving the absolute path from the skill you loaded:
 
@@ -8,21 +8,22 @@ Run the bundled helper from the installed skill directory, resolving the absolut
 python3 /absolute/path/to/kairos/scripts/check_setup.py
 ```
 
-The helper checks only whether `KAIROS_API_KEY` is non-empty; it never prints the key or sends it to GitHub. It reads the local `version.json` and compares stable numeric versions with the plugin manifest on the repository's `main` branch. It does not call the model, install anything, or modify configuration. A present key is not proof of validity or group access.
+The helper checks only whether `KAIROS_API_KEY` is non-empty; it never prints the key or sends it to GitHub. It reads the local `version.json` and compares stable numeric versions with the plugin manifest on the repository's `main` branch. It does not call the model or install anything. It stores only the last check attempt timestamp in `${XDG_CACHE_HOME:-~/.cache}/kairos-skill/update-check.json`. Remote checks run at most once per 24 hours, including failed attempts. Subsequent invocations return `skipped`, without network access or repeated update prompts. If the cache cannot be written, automatic checking is skipped. Explicit user requests may bypass the interval with `--force-update-check`. A present key is not proof of validity or group access.
 
 If public GitHub HTTP access fails, the helper tries a temporary shallow SSH clone using existing Git credentials, without interactive authentication or the Kairos key in the subprocess environment. It reads only the release manifest and cleans up the temporary checkout. This supports private repositories when the user already has SSH access; no Git credentials are created or changed. If neither method works, the result is unknown. A preview feature branch is not the release source: new releases become discoverable after they land on `main`.
 
-If Python is unavailable, read `version.json` and the same remote manifest using available file/HTTP tools and check environment-variable presence without revealing its value. If a check cannot run, say which result is unknown; do not claim the installation is current or the key is missing. Do not install a runtime just to perform the check.
+If Python is unavailable, check API key presence locally without revealing it. Skip automatic remote checks; do not bypass throttling with other tools. For an explicit update request, explain the limitation and inspect the release with available tools if possible. Do not install a runtime just for this check.
 
 ## Offer and perform an update
 
 For `update_available`, show the installed and latest versions and ask one yes/no question: "Kairos skill X is installed; Y is available. Update automatically now?"
 
 - **Yes:** perform the update yourself with the existing installation method and scope. Do not ask again or merely hand the user commands. This authorizes this update, not every future release.
-- **No:** continue with the installed version; do not ask again during the same invocation.
+- **No:** continue with the installed version; do not ask again before the next eligible check, at least 24 hours later.
 - **No answer:** do not update. Continue independent work with the installed version while the question remains pending.
 - **Current or ahead:** no update prompt; never downgrade a preview checkout to an older release.
-- **Unknown:** report the check limitation briefly and continue. A timeout, 404, or malformed response is not evidence that no update exists.
+- **Skipped:** continue silently; do not interpret this as confirmation that the installation is current.
+- **Unknown:** continue silently for automatic checks. Explain the limitation only if the user explicitly requested the check. A timeout, 404, or malformed response is not evidence that no update exists.
 
 Determine the installation method from the loaded skill path and available installer metadata. Do not create a second copy in another agent or change project/global scope.
 
